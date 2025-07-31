@@ -9,16 +9,22 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+import sqlite3
 
 def load_to_db():
-    files = glob.glob("data/*.csv")
-    if not files:
-        logging.warning("No CSV files found. Run fetch_data.py first.")
-        return
-
-    latest_file = max(files, key=os.path.getctime)
-    logging.info(f"Loading data from {latest_file}")
+    os.makedirs("data", exist_ok=True)
+    latest_file = max(glob.glob("data/*.csv"), key=os.path.getctime)
+    print(f"Loading data from {latest_file}")
     df = pd.read_csv(latest_file)
+
+    # Connect to SQLite database
+    conn = sqlite3.connect("data/weather.db")
+    df.to_sql("weather_data", conn, if_exists="append", index=False)
+    conn.close()
+    print("Data successfully loaded into SQLite database.")
+
+if __name__ == "__main__":
+    load_to_db()
 
     conn = None
     cursor = None
@@ -53,6 +59,3 @@ def load_to_db():
             cursor.close()
         if conn:
             conn.close()
-
-if __name__ == "__main__":
-    load_to_db()

@@ -12,6 +12,10 @@ from sqlalchemy import create_engine
 
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
+import sqlite3
+conn = sqlite3.connect("data/weather.db")
+df = pd.read_sql("SELECT * FROM weather_data", conn)
+
 
 def load_data():
     # Safely encode username and password for special characters
