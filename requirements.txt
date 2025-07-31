@@ -6,4 +6,7 @@ schedule
 matplotlib
 streamlit
 scikit-learn
+plotly
+sqlalchemy
+prophet
 joblib
